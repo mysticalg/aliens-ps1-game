@@ -15,13 +15,13 @@ function ripley(B,o,ph){const sw=o.walk?Math.sin(ph):0;
  // left arm around Newt
  box(M(Tor,T(-.3,.45,.05),RX(.2),S(.12,.45,.13)),4);box(M(Tor,T(-.3,.2,.2),S(.12,.12,.4)),4);
  // Newt on left hip
- const N=M(Tor,T(-.4,.22,.08),RY(o.newtYaw||0));box(M(N,T(0,.25,0),S(.28,.4,.2)),18);
+ if(!o.noNewt){const N=M(Tor,T(-.4,.22,.08),RY(o.newtYaw||0));box(M(N,T(0,.25,0),S(.28,.4,.2)),18);
  [-1,1].forEach(s=>box(M(N,T(s*.1,-.02,.12),S(.1,.1,.3)),18));
  box(M(N,T(.13,.32,-.12),RY(.5),S(.08,.08,.32)),4);
- head(M(N,T(0,.6,0),RX(o.newtPitch||0)),o.nf,17,'n',.78);
+ head(M(N,T(0,.6,0),RX(o.newtPitch||0)),o.nf,17,'n',.78);}
  // right arm + weapon
  const A=M(Tor,T(.28,.5,0),RY(o.aimY||0),RX(o.aimP||0));box(M(A,T(0,-.06,.2),S(.12,.12,.45)),4);
- const G=M(A,T(-.08,-.05,.5+(o.thrust||0)));box(M(G,S(.13,.17,.75)),6);box(M(G,T(0,-.13,.15),S(.08,.08,.8)),6,[.8,.8,.7]);box(M(G,T(0,.1,-.05),S(.06,.06,.2)),6);
+ const G=M(A,T(-.08,-.05,.5+(o.thrust||0)));if(!o.noGun){box(M(G,S(.13,.17,.75)),6);box(M(G,T(0,-.13,.15),S(.08,.08,.8)),6,[.8,.8,.7]);box(M(G,T(0,.1,-.05),S(.06,.06,.2)),6);}
  MUZ=M(G,T(0,-.13,.6));if(o.pilot)box(M(G,T(0,-.13,.58),S(.13,.13,.13)),7,[1,.7,.3],1);GUNTOP=tp(G,[0,.15,0]);
  {const Hh=M(Tor,T(0,.86,0),RY(o.yaw||0),RX(o.pitch||0));head(Hh,o.rf,5,'r');box(M(Hh,T(0,-.05,-.1),S(.42,.42,.24)),5);}}
 function warrior(B,ph,dead){if(dead)B=M(B,T(0,.2,0),RX(-PI/2*Math.min(1,dead)));const sw=Math.sin(ph);

@@ -1,6 +1,6 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html><html lang="en"><head><link rel="icon" href="data:,"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>THE HIVE — a PS1-style homage</title>
+<title>THE HIVE — a PS1-style Aliens homage</title>
 <style>
 html,body{margin:0;height:100%;background:#000;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;font-family:Verdana,Geneva,sans-serif;color:#dfe8e2}
 #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
@@ -34,23 +34,29 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;touch-action:none
 #stickn{position:absolute;left:30px;top:30px;width:50px;height:50px;border-radius:50%;background:rgba(220,235,228,.7)}
 #thelp{position:absolute;left:4%;bottom:3%;font-size:clamp(10px,2.8vmin,13px);opacity:.75}
 @media (orientation:portrait){#hint{bottom:44%;left:4%;right:4%}}
+#trk{position:absolute;left:3%;top:calc(max(2%,env(safe-area-inset-top)) + clamp(48px,12vmin,72px));width:clamp(84px,24vmin,140px);height:clamp(84px,24vmin,140px);display:none}
+#menu{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;width:min(560px,92vw)}
+.chb{font:bold clamp(13px,3.4vmin,17px) Verdana,sans-serif;padding:.55em .4em;background:#1c2a26;color:#e8f0ea;border:2px solid #6a9080;border-radius:4px;pointer-events:auto}
+.chb:disabled{opacity:.4}
+.obtn{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.obtn .big{margin-top:.6em}
+#chap{position:absolute;left:0;right:0;top:30%;text-align:center;font:clamp(22px,7vmin,44px) Impact,'Arial Black',sans-serif;letter-spacing:2px;color:#e8f2ec;text-shadow:3px 3px 0 #000;display:none;pointer-events:none}
 #fps{position:absolute;left:4px;bottom:4px;font-size:12px}
 </style></head><body>
 <div id="stage">
 <canvas id="g" width="320" height="240"></canvas><canvas id="o" width="320" height="240"></canvas>
 <div id="glow"></div><div id="vig"></div>
-<div id="hud"><div id="top"><div id="hpw"><div id="hp"></div></div><div id="score">SCORE 0</div></div><div id="obj"></div>
-<div id="tens">TENSION — keep the nozzle on the eggs<div id="tensb"><div id="tensf"></div></div></div>
+<div id="hud"><div id="top"><div id="hpw"><div id="hp"></div></div><div id="score">SCORE 0</div></div><div id="obj"></div><canvas id="trk" width="120" height="120"></canvas>
+<div id="tens"><span id="tensl">TENSION — keep the nozzle on the eggs</span><div id="tensb"><div id="tensf"></div></div></div>
 <div id="hint"></div><div id="weap"></div><div id="ammo"><div id="ammon">95</div><div id="click">*click*</div></div></div>
 <div id="sub"></div><div id="skip">tap / click to skip ▸</div>
 <div id="ctrls"><div id="thelp">left: move · right: drag to aim</div><div class="btn" id="bswitch">SWAP</div><div class="btn" id="bfire">FIRE</div></div>
-<div id="title" class="full"><h1>THE HIVE</h1><p>A PS1-style homage to the queen's-lair finale of <i>Aliens</i> (1986). Fan-made, original art, music and text.</p>
-<p id="hk">Mouse: aim · Click / Space: fire · WASD: move · Q: swap weapon</p><button class="big" id="start">START</button></div>
-<div id="over" class="full" style="display:none"><h1 id="ovt">GAME OVER</h1><p id="ovs"></p><button class="big" id="restart">RESTART</button></div>
+<div id="title" class="full"><h1>THE HIVE</h1><p>A PS1-style homage to <i>Aliens</i> (1986): eight chapters, from the drop to the airlock. Fan-made, original art, music and text.</p>
+<p id="hk">Mouse: aim · Click / Space: fire · WASD: move · Q: swap weapon</p><button class="big" id="start">START</button><div id="menu"></div></div>
+<div id="over" class="full" style="display:none"><h1 id="ovt">GAME OVER</h1><p id="ovs"></p><div class="obtn"><button class="big" id="next">NEXT CHAPTER</button><button class="big" id="restart">RETRY</button><button class="big" id="tomenu">CHAPTERS</button></div></div><div id="chap"></div>
 <div id="fps"></div>
 </div>
 <div id="stickb"><div id="stickn"></div></div>
-<script src="engine.js?v=3"></script><script src="models.js?v=3"></script><script src="game.js?v=3"></script>
+<script src="engine.js?v=4"></script><script src="models.js?v=4"></script><script src="game.js?v=4"></script><script src="campaign.js?v=4"></script>
 <script>
 (function fit(){const g=document.getElementById('g');function f(){const s=Math.min(innerWidth/g.width,innerHeight/g.height);g.style.width=Math.floor(g.width*s)+'px';g.style.height=Math.floor(g.height*s)+'px'}f();addEventListener('resize',f)})();
 if(location.search.includes('touch')||(matchMedia('(pointer: coarse)').matches&&!matchMedia('(any-pointer: fine)').matches))document.getElementById('hk').textContent='Left thumb: move · Right thumb: drag to aim · FIRE / SWAP buttons';

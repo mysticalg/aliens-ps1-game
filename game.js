@@ -1,5 +1,5 @@
 // ===== THE HIVE — PS1-style browser game (original homage) =====
-const Q=new URLSearchParams(location.search),AUTO=Q.has('auto'),MANUAL=Q.has('manual');
+const Q=new URLSearchParams(location.search);let AUTO=Q.has('auto');const MANUAL=Q.has('manual');
 const $=id=>document.getElementById(id);
 // ---------- GL buffers ----------
 function mkVAO(){const vao=gl.createVertexArray();gl.bindVertexArray(vao);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);
