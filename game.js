@@ -34,12 +34,12 @@ function music(){if(!AC||!musicOn)return;const now=AC.currentTime;if(mNext<now)m
   if(lvl==0&&i==0&&bar==0)tone(440*2**((root+7-69)/12),st*7,'triangle',.25,t0,MG);
   mNext+=st;mStep++;}}
 // ---------- input ----------
-const K={},IN={mx:0,my:0,mvx:0,mvz:0,fire:false,switch:false,skip:false,ax:0,ay:0};let TOUCH=('ontouchstart' in window)||Q.has('touch');
+const K={},IN={mx:0,my:0,mvx:0,mvz:0,fire:false,switch:false,skip:false,ax:0,ay:0};let TOUCH=Q.has('touch')||(matchMedia('(pointer: coarse)').matches&&!matchMedia('(any-pointer: fine)').matches);
 addEventListener('keydown',e=>{K[e.code]=1;if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();if(e.code=='KeyQ'||e.code=='KeyE'||e.code=='Tab'){IN.switch=true;e.preventDefault()}if(e.code=='Enter'||e.code=='Space')IN.skip=true;audioInit()});
 addEventListener('keyup',e=>{K[e.code]=0});
 const stage=$('stage');
-stage.addEventListener('mousemove',e=>{if(TOUCH)return;const r=stage.getBoundingClientRect();IN.mx=(e.clientX-r.left)/r.width*2-1;IN.my=(e.clientY-r.top)/r.height*2-1});
-stage.addEventListener('mousedown',e=>{if(TOUCH)return;audioInit();IN.mfire=true;IN.skip=true});addEventListener('mouseup',()=>IN.mfire=false);
+addEventListener('mousemove',e=>{const r=stage.getBoundingClientRect();IN.mx=(e.clientX-r.left)/r.width*2-1;IN.my=(e.clientY-r.top)/r.height*2-1});
+addEventListener('mousedown',e=>{if(e.button!==0||(e.target.closest&&e.target.closest('button,.btn')))return;audioInit();IN.mfire=true;IN.skip=true});addEventListener('blur',()=>IN.mfire=false);addEventListener('mouseup',()=>IN.mfire=false);
 // touch: left stick, right aim drag, buttons
 let stick=null,aimT=null;
 function tstart(e){audioInit();for(const t of e.changedTouches){const el=t.target;if(el.closest&&el.closest('.btn'))continue;if(G.phase=='cut'||G.phase=='title'){IN.skip=true;continue}
@@ -93,7 +93,7 @@ fall:[
 function startCut(name,next){G.phase='cut';G.cut={list:CUTS[name],i:0,u:0,next,name};$('title').style.display='none';}
 function startIntro(){if(G.phase!='title'&&G.phase!='win'&&G.phase!='over')return;reset();$('title').style.display='none';startCut('intro',()=>enter('standoff'))}
 function enter(p){G.phase=p;G.pt=0;HISS=0;
- if(p=='standoff'){G.pz=1.2;G.px=0;G.yaw=0;G.pitch=-.35;G.weap='flame';G.hint='Keep the flamethrower on the EGGS. Edge back to the exit line.'}
+ if(p=='standoff'){G.pz=1.2;G.px=0;G.yaw=0;G.pitch=-.35;G.weap='flame';G.hint='STANDOFF: don\'t fire. Aim at the eggs and back away (S / ↓).';G.msgT=4}
  if(p=='torch'){G.hint='Hold FIRE — torch the eggs!'}
  if(p=='shoot'){G.weap='rifle';G.unlocked=['flame','rifle'];G.pitch=0;G.hint='Pulse rifle! Cut down the warriors.'}
  if(p=='gren'){G.weap='gren';G.unlocked=['flame','rifle','gren'];G.pitch=.12;G.yaw=0;G.warriors.forEach(w=>w.flee=1);G.hint='Aim high: launch grenades into the EGG SAC.'}
@@ -148,7 +148,7 @@ function update(dt){G.t+=dt;RT=G.t;const ph=G.phase;
  // phase logic
  if(ph=='standoff'){if(!G.warriors.length)[-1,1].forEach(s=>G.warriors.push({x:s*5,z:-6,side:s,ph:0,hp:4,sp:2.5}));
   const p=aimGround();const on=p&&eggAt(p,.75)>=0&&Math.hypot(p[0]-G.px,p[2]-G.pz)<6;G.onTarget=on;
-  G.tension=cl(G.tension+(on?-16:34)*dt,0,100);if(fire&&G.pt>1){G.tension=cl(G.tension+60*dt,0,100);G.hint='Hold your fire! Just keep it aimed at the eggs.';G.msgT=2}
+  G.tension=cl(G.tension+(on?-16:34)*dt,0,100);if(fire&&G.pt>1){G.tension=cl(G.tension+60*dt,0,100);G.hint='NO FIRING YET! Just keep it aimed at the eggs and back away (S / ↓).';G.msgT=2}else if(G.msgT<=0){G.hint='STANDOFF: don\'t fire. Aim at the eggs and back away (S / ↓).';G.msgT=1}
   if(G.tension>=100){hurt(25);G.tension=55;SFX.hiss();G.hint='The warriors lunge! Keep the nozzle on the eggs!';G.msgT=2.5}
   HISS=G.tension>70?.6:0;QTILT=on?.35:0;G.score+=on?Math.round(dt*20):0;
   if(G.pz>=4.6){G.score+=Math.round(200*(G.hp/100));let bi=-1,bd=9;EGGS.forEach(([x,z],i)=>{const d=Math.hypot(x-G.px-.8,z-G.pz+1.5);if(d<bd){bd=d;bi=i}});G.openI=bi;G.warriors.forEach(w=>w.flee=1);
