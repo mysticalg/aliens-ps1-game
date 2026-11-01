@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>THE HIVE — a PS1-style homage</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;font-family:Verdana,Geneva,sans-serif;color:#dfe8e2}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#g{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
+#o{display:none}
+.ov{position:absolute;pointer-events:none}
+#hud{position:absolute;inset:0;pointer-events:none;display:none}
+#top{position:absolute;left:3%;right:3%;top:max(2%,env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;font-weight:bold;font-size:clamp(13px,3.6vmin,22px);text-shadow:2px 2px 0 #000}
+#hpw{width:34%;height:clamp(10px,2.4vmin,16px);border:2px solid #cfd8d2;background:#202826}#hp{height:100%;background:#7ac0a0;width:100%}
+#obj{position:absolute;top:calc(max(2%,env(safe-area-inset-top)) + clamp(22px,6vmin,36px));left:0;right:0;text-align:center;font-weight:bold;font-size:clamp(13px,3.4vmin,20px);text-shadow:2px 2px 0 #000}
+#tens{position:absolute;left:15%;right:15%;top:calc(max(2%,env(safe-area-inset-top)) + clamp(46px,12vmin,70px));display:none;font-size:clamp(11px,3vmin,16px);font-weight:bold;text-align:center;text-shadow:2px 2px 0 #000}
+#tensb{height:clamp(10px,2.2vmin,14px);border:2px solid #cfd8d2;background:#202826;margin-top:3px}#tensf{height:100%;width:20%}
+#hint{position:absolute;left:5%;right:5%;bottom:30%;text-align:center;font-weight:bold;font-size:clamp(14px,3.8vmin,22px);text-shadow:2px 2px 0 #000;color:#f0e6b0}
+#ammo{position:absolute;right:4%;bottom:6%;display:none;text-align:center}
+#ammon{font:bold clamp(34px,10vmin,64px) 'Courier New',monospace;color:#ffb040;background:#101410;border:2px solid #606860;padding:0 10px;text-shadow:2px 2px 0 #402000}
+#click{font-weight:bold;font-size:clamp(12px,3.2vmin,18px)}
+#weap{position:absolute;left:4%;bottom:6%;font-weight:bold;font-size:clamp(12px,3.2vmin,18px);text-shadow:2px 2px 0 #000}
+#sub{position:absolute;left:4%;right:4%;bottom:9%;text-align:center;font-weight:bold;font-size:clamp(14px,4vmin,24px);background:rgba(0,0,0,.6);padding:8px;display:none;pointer-events:none}
+#skip{position:absolute;right:3%;top:max(2%,env(safe-area-inset-top));font-size:clamp(11px,3vmin,15px);opacity:.8;display:none;pointer-events:none}
+#vig{position:absolute;inset:0;pointer-events:none;opacity:0;box-shadow:inset 0 0 60px 30px rgba(170,90,40,.9);transition:opacity .25s}
+#glow{position:absolute;inset:0;pointer-events:none;opacity:0;background:#ff9a3c;transition:opacity .8s}
+.full{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(0,0,0,.55)}
+.full h1{font:clamp(34px,10vmin,72px) Impact,'Arial Black',sans-serif;margin:0 0 .2em;color:#d8e8e0;text-shadow:3px 3px 0 #203028;letter-spacing:2px}
+.full p{font-size:clamp(13px,3.4vmin,18px);max-width:88%;margin:.3em}
+.big{font:bold clamp(18px,5vmin,28px) Verdana,sans-serif;padding:.5em 1.4em;margin-top:1em;background:#2a3a34;color:#e8f0ea;border:3px solid #9ac0b0;border-radius:4px}
+#ctrls{display:none}
+.btn{position:absolute;border-radius:50%;border:3px solid rgba(220,235,228,.8);background:rgba(40,60,54,.55);color:#fff;font-weight:bold;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,4vmin,20px);pointer-events:auto;touch-action:none}
+#bfire{width:24vmin;height:24vmin;min-width:84px;min-height:84px;right:5%;bottom:16%}
+#bswitch{width:16vmin;height:16vmin;min-width:60px;min-height:60px;right:8%;bottom:calc(16% + max(26vmin,92px))}
+#stickb{position:fixed;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:3px solid rgba(220,235,228,.6);background:rgba(40,60,54,.3);display:none;pointer-events:none}
+#stickn{position:absolute;left:30px;top:30px;width:50px;height:50px;border-radius:50%;background:rgba(220,235,228,.7)}
+#thelp{position:absolute;left:4%;bottom:3%;font-size:clamp(10px,2.8vmin,13px);opacity:.75}
+@media (orientation:portrait){#hint{bottom:44%;left:4%;right:4%}}
+#fps{position:absolute;left:4px;bottom:4px;font-size:12px}
+</style></head><body>
+<div id="stage">
+<canvas id="g" width="320" height="240"></canvas><canvas id="o" width="320" height="240"></canvas>
+<div id="glow"></div><div id="vig"></div>
+<div id="hud"><div id="top"><div id="hpw"><div id="hp"></div></div><div id="score">SCORE 0</div></div><div id="obj"></div>
+<div id="tens">TENSION — keep the nozzle on the eggs<div id="tensb"><div id="tensf"></div></div></div>
+<div id="hint"></div><div id="weap"></div><div id="ammo"><div id="ammon">95</div><div id="click">*click*</div></div></div>
+<div id="sub"></div><div id="skip">tap / click to skip ▸</div>
+<div id="ctrls"><div id="thelp">left: move · right: drag to aim</div><div class="btn" id="bswitch">SWAP</div><div class="btn" id="bfire">FIRE</div></div>
+<div id="title" class="full"><h1>THE HIVE</h1><p>A PS1-style homage to the queen's-lair finale of <i>Aliens</i> (1986). Fan-made, original art, music and text.</p>
+<p id="hk">Mouse: aim · Click / Space: fire · WASD: move · Q: swap weapon</p><button class="big" id="start">START</button></div>
+<div id="over" class="full" style="display:none"><h1 id="ovt">GAME OVER</h1><p id="ovs"></p><button class="big" id="restart">RESTART</button></div>
+<div id="fps"></div>
+</div>
+<div id="stickb"><div id="stickn"></div></div>
+<script src="engine.js"></script><script src="models.js"></script><script src="game.js"></script>
+<script>
+(function fit(){const g=document.getElementById('g');function f(){const s=Math.min(innerWidth/g.width,innerHeight/g.height);g.style.width=Math.floor(g.width*s)+'px';g.style.height=Math.floor(g.height*s)+'px'}f();addEventListener('resize',f)})();
+if(('ontouchstart' in window)||location.search.includes('touch'))document.getElementById('hk').textContent='Left thumb: move · Right thumb: drag to aim · FIRE / SWAP buttons';
+</script></body></html>
