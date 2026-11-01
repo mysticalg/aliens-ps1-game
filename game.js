@@ -123,9 +123,9 @@ function update(dt){G.t+=dt;RT=G.t;const ph=G.phase;
  if(G.moving){G.stepT-=dt;if(G.stepT<0){G.stepT=ph=='escape'?.28:.5;SFX.step()}}
  // weapon fire
  G.firing=false;
- if(fire&&ph!='standoff'){if(G.weap=='flame'){G.firing=true;if(G.t-G.lastFire>.16){G.lastFire=G.t;SFX.flame()}
-   const p=aimGround();if(p)EGGS.forEach(([x,z],i)=>{if(G.burn[i]<1&&Math.hypot(x-p[0],z-p[2])<1.4&&Math.hypot(x-G.px,z-G.pz)<8){if(G.burn[i]==0)G.eggDirty=true;G.burn[i]+=dt*1.8;if(G.burn[i]>=1){G.burn[i]=1;G.bt[i]=G.t;G.burned++;G.score+=10}}});
-   G.warriors.forEach(w=>{if(!w.dead&&Math.hypot(w.x-G.px,w.z-G.pz)<5){const d=dirOf(G.yaw,0),v=[w.x-G.px,w.z-G.pz],l=Math.hypot(...v);if((d[0]*v[0]+d[2]*v[1])/l>.85)hitW(w,dt*2.5)}})}
+ if(fire){if(G.weap=='flame'){G.firing=true;if(G.t-G.lastFire>.16){G.lastFire=G.t;SFX.flame()}
+   const p=aimGround();if(p&&ph!='standoff')EGGS.forEach(([x,z],i)=>{if(G.burn[i]<1&&Math.hypot(x-p[0],z-p[2])<1.4&&Math.hypot(x-G.px,z-G.pz)<8){if(G.burn[i]==0)G.eggDirty=true;G.burn[i]+=dt*1.8;if(G.burn[i]>=1){G.burn[i]=1;G.bt[i]=G.t;G.burned++;G.score+=10}}});
+   if(ph!='standoff')G.warriors.forEach(w=>{if(!w.dead&&Math.hypot(w.x-G.px,w.z-G.pz)<5){const d=dirOf(G.yaw,0),v=[w.x-G.px,w.z-G.pz],l=Math.hypot(...v);if((d[0]*v[0]+d[2]*v[1])/l>.85)hitW(w,dt*2.5)}})}
   else if(G.weap=='rifle'){if(G.t-G.lastFire>.1){G.lastFire=G.t;if(G.ammo>0){G.ammo--;G.flash=G.t;SFX.rifle();const d=dirOf(G.yaw+(Math.random()-.5)*.04,G.pitch);let best=null,bd=99;
      G.warriors.forEach(w=>{if(w.dead)return;const v=[w.x-G.px,1.1-1.35,w.z-G.pz];const k=v[0]*d[0]+v[1]*d[1]+v[2]*d[2];if(k<0)return;const pr=Math.hypot(v[0]-d[0]*k,v[1]-d[1]*k,v[2]-d[2]*k);if(pr<.65&&k<bd){bd=k;best=w}});
      if(best){hitW(best,1);G.fx.push({p:[best.x,1.2,best.z],t:G.t,k:'spark'})}else G.fx.push({p:add([G.px,1.35,G.pz],d.map(v=>v*7)),t:G.t,k:'spark'});
@@ -148,7 +148,7 @@ function update(dt){G.t+=dt;RT=G.t;const ph=G.phase;
  // phase logic
  if(ph=='standoff'){if(!G.warriors.length)[-1,1].forEach(s=>G.warriors.push({x:s*5,z:-6,side:s,ph:0,hp:4,sp:2.5}));
   const p=aimGround();const on=p&&eggAt(p,.75)>=0&&Math.hypot(p[0]-G.px,p[2]-G.pz)<6;G.onTarget=on;
-  G.tension=cl(G.tension+(on?-16:34)*dt,0,100);if(fire&&G.pt>1){G.tension=cl(G.tension+60*dt,0,100);G.hint='NO FIRING YET! Just keep it aimed at the eggs and back away (S / ↓).';G.msgT=2}else if(G.msgT<=0){G.hint='STANDOFF: don\'t fire. Aim at the eggs and back away (S / ↓).';G.msgT=1}
+  G.tension=cl(G.tension+(on?-16:34)*dt,0,100);if(fire&&G.pt>1){G.tension=cl(G.tension+25*dt,0,100);G.hint='Warning burst! Don\'t torch them yet. Keep it on the eggs and back away (S / ↓).';G.msgT=2}else if(G.msgT<=0){G.hint='STANDOFF: don\'t fire. Aim at the eggs and back away (S / ↓).';G.msgT=1}
   if(G.tension>=100){hurt(25);G.tension=55;SFX.hiss();G.hint='The warriors lunge! Keep the nozzle on the eggs!';G.msgT=2.5}
   HISS=G.tension>70?.6:0;QTILT=on?.35:0;G.score+=on?Math.round(dt*20):0;
   if(G.pz>=4.6){G.score+=Math.round(200*(G.hp/100));let bi=-1,bd=9;EGGS.forEach(([x,z],i)=>{const d=Math.hypot(x-G.px-.8,z-G.pz+1.5);if(d<bd){bd=d;bi=i}});G.openI=bi;G.warriors.forEach(w=>w.flee=1);
